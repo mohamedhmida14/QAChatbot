@@ -1,0 +1,5 @@
+streamlit
+langchain
+numpy
+faiss-cpu
+PyPDF2
