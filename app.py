@@ -11,8 +11,6 @@ from dotenv import load_dotenv
 
 # Load environment variables from .env file
 load_dotenv()
-GROQ_API_KEY='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'
-HF_TOKEN='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'
 # Retrieve API keys from environment variables
 hf_token = HF_TOKEN
 groq_api_key = GROQ_API_KEY
