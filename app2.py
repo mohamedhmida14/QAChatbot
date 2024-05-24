@@ -28,12 +28,9 @@ vectorstore = FAISS.from_documents(final_documents[:120], huggingface_embeddings
 
 # Set HuggingFace Hub API token
 os.environ["HF_TOKEN"]= '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'
-
+groq_api_key = os.getenv('GROQ_API_KEY')
 # HuggingFace Hub LLM
-hf = HuggingFaceHub(
-    repo_id="mistralai/Mistral-7B-v0.1",
-    model_kwargs={"temperature": 0.1, "max_length": 500}
-)
+llm = ChatGroq(groq_api_key=groq_api_key, model_name="Llama3-8b-8192")
 
 # Streamlit App
 st.title("HuggingFace LLM and FAISS VectorStore Demo")
