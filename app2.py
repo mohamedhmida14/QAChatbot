@@ -17,7 +17,7 @@ hf_token = os.getenv("HF_TOKEN")
 groq_api_key = os.getenv("GROQ_API_KEY")
 
 # Streamlit App
-st.title("HuggingFace LLM and FAISS VectorStore Demo")
+st.title("Discover your future at ClusterLab")
 
 # File uploader for the resume PDF
 uploaded_file = st.file_uploader("Upload your resume (PDF)", type=["pdf"])
