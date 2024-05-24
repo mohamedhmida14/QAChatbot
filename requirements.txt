@@ -1,5 +1,8 @@
-streamlit
 langchain
-numpy
+langchain_community
+streamlit
+langsmith
+transformers
 faiss-cpu
-PyPDF2
+sentence-transformers
+python-dotenv
