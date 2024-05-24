@@ -20,7 +20,7 @@ groq_api_key = os.getenv("GROQ_API_KEY")
 st.title("Discover your future at ClusterLab")
 
 # File uploader for the resume PDF
-uploaded_file = st.file_uploader("Upload your resume (PDF)", type=["pdf"])
+uploaded_file = st.file_uploader("Upload your resume (pdf) to see if you are a good fit !", type=["pdf"])
 
 if uploaded_file is not None:
     # Save the uploaded PDF to the Documents folder
