@@ -65,7 +65,7 @@ if st.button("Get Answer"):
 
     # Display the result
     st.header("Result:")
-    st.write(result['answer'])
+    st.write(result)
 
     # Display relevant documents
     with st.expander("Document Context"):
