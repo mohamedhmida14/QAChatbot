@@ -30,7 +30,7 @@ vectorstore = FAISS.from_documents(final_documents[:120], huggingface_embeddings
 
 # Set HuggingFace Hub API token
 os.environ["HF_TOKEN"]= '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'
-groq_api_key = os.getenv('GROQ_API_KEY')
+groq_api_key = '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'
 # HuggingFace Hub LLM
 llm = ChatGroq(groq_api_key=groq_api_key, model_name="Llama3-8b-8192")
 
