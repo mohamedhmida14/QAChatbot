@@ -53,7 +53,7 @@ if st.button("Get Answer"):
     prompt = PromptTemplate(template=prompt_template, input_variables=["context", "question"])
 
     retrievalQA = RetrievalQA.from_chain_type(
-        llm=hf,
+        llm=llm,
         chain_type="stuff",
         retriever=vectorstore.as_retriever(),
         return_source_documents=True,
