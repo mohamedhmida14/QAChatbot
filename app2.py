@@ -27,7 +27,7 @@ huggingface_embeddings = HuggingFaceBgeEmbeddings(
 vectorstore = FAISS.from_documents(final_documents[:120], huggingface_embeddings)
 
 # Set HuggingFace Hub API token
-os.environ['HUGGINGFACEHUB_API_TOKEN'] = "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"
+os.environ["HF_TOKEN"]= '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'
 
 # HuggingFace Hub LLM
 hf = HuggingFaceHub(
