@@ -55,7 +55,7 @@ vectorstore = FAISS.from_documents(final_documents[:120], huggingface_embeddings
 os.environ["HF_TOKEN"] = hf_token
 
 # HuggingFace Hub LLM
-llm = ChatGroq(groq_api_key=groq_api_key, model_name="Llama3-8b-8192")
+llm = ChatGroq(groq_api_key=groq_api_key, model_name="llama3-70b-8192")
 
 query = st.text_input("Enter your question:")
 
