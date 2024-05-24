@@ -1,74 +1,86 @@
 import streamlit as st
 import os
 from langchain_groq import ChatGroq
-
-from langchain_community.document_loaders import PyPDFDirectoryLoader
+from langchain_community.document_loaders import PyPDFLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.vectorstores import FAISS
-from langchain_community.llms import HuggingFaceHub
 from langchain_community.embeddings import HuggingFaceBgeEmbeddings
 from langchain.prompts import PromptTemplate
 from langchain.chains import RetrievalQA
+from dotenv import load_dotenv
 
-# Load PDF documents from directory
-loader = PyPDFDirectoryLoader("./Documents")
-documents = loader.load()
+# Load environment variables from .env file
+load_dotenv()
 
-# Split documents into chunks
-text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
-final_documents = text_splitter.split_documents(documents)
-
-# HuggingFace Embeddings
-huggingface_embeddings = HuggingFaceBgeEmbeddings(
-    model_name="BAAI/bge-small-en-v1.5",
-    model_kwargs={'device': 'cpu'},
-    encode_kwargs={'normalize_embeddings': True}
-)
-
-# Create FAISS vector store
-vectorstore = FAISS.from_documents(final_documents[:120], huggingface_embeddings)
-
-# Set HuggingFace Hub API token
-os.environ["HF_TOKEN"]= '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'
-groq_api_key = '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'
-# HuggingFace Hub LLM
-llm = ChatGroq(groq_api_key=groq_api_key, model_name="Llama3-8b-8192")
+# Retrieve API keys from environment variables
+hf_token = os.getenv("HF_TOKEN")
+groq_api_key = os.getenv("GROQ_API_KEY")
 
 # Streamlit App
 st.title("HuggingFace LLM and FAISS VectorStore Demo")
 
-query = st.text_input("Enter your question:")
+# File uploader for the resume PDF
+uploaded_file = st.file_uploader("Upload your resume (PDF)", type=["pdf"])
 
-if st.button("Get Answer"):
-    # Create RetrievalQA chain
-    prompt_template = """
-    Use the following piece of context to answer the question asked.
-    Please try to provide the answer only based on the context
-    
-    {context}
-    Question: {question}
-    
-    Helpful Answers:
-    """
-    prompt = PromptTemplate(template=prompt_template, input_variables=["context", "question"])
+if uploaded_file is not None:
+    # Load the uploaded PDF document
+    loader = PyPDFLoader(uploaded_file)
+    documents = loader.load()
 
-    retrievalQA = RetrievalQA.from_chain_type(
-        llm=llm,
-        chain_type="stuff",
-        retriever=vectorstore.as_retriever(),
-        return_source_documents=True,
-        chain_type_kwargs={"prompt": prompt}
+    # Split documents into chunks
+    text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
+    final_documents = text_splitter.split_documents(documents)
+
+    # HuggingFace Embeddings
+    huggingface_embeddings = HuggingFaceBgeEmbeddings(
+        model_name="BAAI/bge-small-en-v1.5",
+        model_kwargs={'device': 'cpu'},
+        encode_kwargs={'normalize_embeddings': True}
     )
 
-    # Call the QA chain with our query
-    result = retrievalQA.invoke({"query": query})
+    # Create FAISS vector store
+    vectorstore = FAISS.from_documents(final_documents, huggingface_embeddings)
 
-    # Display the result
-    st.header("Result:")
-    st.write(result['result'])
+    # Set HuggingFace Hub API token
+    os.environ["HF_TOKEN"] = hf_token
 
-    # Display relevant documents
-    with st.expander("Document Contex"):
-        for doc in result['source_documents']:
-            st.write(doc.page_content)
-            st.write("--------------------------------")
+    # HuggingFace Hub LLM
+    llm = ChatGroq(groq_api_key=groq_api_key, model_name="Llama3-8b-8192")
+
+    query = st.text_input("Enter your question:")
+
+    if st.button("Get Answer"):
+        # Create RetrievalQA chain
+        prompt_template = """
+        Use the following piece of context to answer the question asked.
+        Please try to provide the answer only based on the context
+        
+        {context}
+        Question: {question}
+        
+        Helpful Answers:
+        """
+        prompt = PromptTemplate(template=prompt_template, input_variables=["context", "question"])
+
+        retrievalQA = RetrievalQA.from_chain_type(
+            llm=llm,
+            chain_type="stuff",
+            retriever=vectorstore.as_retriever(),
+            return_source_documents=True,
+            chain_type_kwargs={"prompt": prompt}
+        )
+
+        # Call the QA chain with our query
+        result = retrievalQA.invoke({"query": query})
+
+        # Display the result
+        st.header("Result:")
+        st.write(result['result'])
+
+        # Display relevant documents
+        with st.expander("Document Context"):
+            for doc in result['source_documents']:
+                st.write(doc.page_content)
+                st.write("--------------------------------")
+else:
+    st.info("Please upload a PDF resume to proceed.")
