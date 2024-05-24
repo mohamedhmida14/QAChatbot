@@ -37,7 +37,7 @@ llm = ChatGroq(groq_api_key=groq_api_key, model_name="Llama3-8b-8192")
 # Streamlit App
 st.title("HuggingFace LLM and FAISS VectorStore Demo")
 
-query = st.text_area("Enter your question:")
+query = st.text_input("Enter your question:")
 
 if st.button("Get Answer"):
     # Create RetrievalQA chain
@@ -65,10 +65,10 @@ if st.button("Get Answer"):
 
     # Display the result
     st.header("Result:")
-    st.write(result)
+    st.write(result['result'])
 
     # Display relevant documents
-    with st.expander("Document Context"):
-        for doc in result['context']:
+    with st.expander("Document Contex"):
+        for doc in result['source_documents']:
             st.write(doc.page_content)
             st.write("--------------------------------")
